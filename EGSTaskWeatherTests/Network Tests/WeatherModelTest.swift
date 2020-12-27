@@ -19,12 +19,11 @@ class WeatherModelTest: XCTestCase {
         let sessionMock: NetworkManagerProtocol = NetworkSessionMock()
         var weatherModel: WeatherModel? = nil
         let receivedError: Error? = nil
-        let jsonDecoder = JSONDecoder()
         let expectation = XCTestExpectation()
         
         expectation.expectedFulfillmentCount = 1
         _ = sessionMock.request(with: URLBuilder(for: GetWeatherApi.getWeatherForCity(name: "", unit: .celsius), apiKeyProtocol: ValidAPIKeys())).subscribe (onSuccess: { (result) in
-            weatherModel = try? jsonDecoder.decode(WeatherModel.self, from: result.0)
+            weatherModel = try? WeatherModel.decode(from: result.0)
             expectation.fulfill()
         })
         
@@ -33,6 +32,7 @@ class WeatherModelTest: XCTestCase {
         XCTAssertNil(receivedError, "\(receivedError!.localizedDescription)")
         XCTAssertNotNil(weatherModel)
         XCTAssertEqual(weatherModel?.current.weatherDescription[0].localizedDescription, "Clear - clear sky")
+        XCTAssertNotNil(weatherModel?.current.weatherDescription[0].iconURL)
     }
     
 }
