@@ -1,7 +1,7 @@
 # EGSWeatherMVVM-RX
 
-`Architecure:` MVVM+RxSwift
+`Architecture:` MVVM+RxSwift
 
 `Storage:` CoreData 
 
-`Unit tests:` over 80% coverage
+`Unit tests:` 80% coverage
