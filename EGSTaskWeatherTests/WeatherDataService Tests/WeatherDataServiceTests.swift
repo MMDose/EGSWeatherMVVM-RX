@@ -37,6 +37,8 @@ class WeatherDataServiceTests: XCTestCase {
     
 
     func testRequestWeatherPlacemarkNotNillReachabilityConnected() {
+        // For geolocation protocol its required that device should be connected to network oterwise test will failure.
+
         rechabilityServiceStub.mutableConnection = .cellular
         let geocoderExpectation = XCTestExpectation()
         let targetLocation = CLLocation(latitude: 40.177200, longitude: 44.503490)
@@ -50,7 +52,6 @@ class WeatherDataServiceTests: XCTestCase {
         geocoderExpectation.expectedFulfillmentCount = 1
 
         let locationManager = CLLocationManager()
-        
         let geolocation: GeolocationProtocol = GeolocationService(locationManager: locationManager)
         _ = geolocation.placemarks.drive (onNext: { (value) in
             receivedPlacemark = value
@@ -63,7 +64,6 @@ class WeatherDataServiceTests: XCTestCase {
             
         let weatherDataExpectation = XCTestExpectation()
         weatherDataExpectation.expectedFulfillmentCount = 1
-        weatherDataService.requestWeatherData(for: receivedPlacemark)
 
         _ = weatherDataService.weatherData.subscribe { (result) in
             switch result {
@@ -80,6 +80,7 @@ class WeatherDataServiceTests: XCTestCase {
 
             receivedError = true
         }
+        weatherDataService.requestWeatherData(for: receivedPlacemark)
         self.wait(for: [weatherDataExpectation], timeout: 2.0)
         
         XCTAssertEqual(receivedLocaly, targetCity)
@@ -98,7 +99,6 @@ class WeatherDataServiceTests: XCTestCase {
         var receivedLocaly: String?
         var receivedWeatherData: WeatherModel?
         var unAvailableData: Bool = false
-        var receivedError: Bool = false
         
         geocoderExpectation.expectedFulfillmentCount = 1
         
@@ -116,9 +116,8 @@ class WeatherDataServiceTests: XCTestCase {
         
         let weatherDataExpectation = XCTestExpectation()
         weatherDataExpectation.expectedFulfillmentCount = 1
-        weatherDataService.requestWeatherData(for: receivedPlacemark)
-
-        _ = weatherDataService.weatherData.subscribe { (result) in
+        
+        _ = weatherDataService.weatherData.subscribe (onNext: { (result) in
             switch result {
             case.some(locality: let localy, weatherModel: let weather):
                 receivedLocaly = localy
@@ -127,19 +126,17 @@ class WeatherDataServiceTests: XCTestCase {
                 unAvailableData = true
             }
             weatherDataExpectation.fulfill()
-
             
-        } onError: { (error) in
-            weatherDataExpectation.fulfill()
-
-            receivedError = true
-        }
-        self.wait(for: [weatherDataExpectation], timeout: 2.0)
+            
+        })
+        weatherDataService.requestWeatherData(for: receivedPlacemark)
+        
+        
+        self.wait(for: [weatherDataExpectation], timeout: 10.0)
         
         XCTAssertNotEqual(receivedLocaly, targetCity)
         XCTAssertNil(receivedWeatherData)
         XCTAssertTrue(unAvailableData)
-        XCTAssertFalse(receivedError)
 
     }
     
@@ -147,27 +144,23 @@ class WeatherDataServiceTests: XCTestCase {
         rechabilityServiceStub.mutableConnection = .cellular
         let receivedPlacemark: CLPlacemark?  = nil
         var unAvailableData: Bool = false
-        var receivedError: Bool = false
             
         let weatherDataExpectation = XCTestExpectation()
         weatherDataExpectation.expectedFulfillmentCount = 1
-        weatherDataService.requestWeatherData(for: receivedPlacemark)
 
-        _ = weatherDataService.weatherData.subscribe { (result) in
+        _ = weatherDataService.weatherData.subscribe (onNext: { (result) in
             switch result {
             case .empty:
                 unAvailableData = true
             default: break
             }
             weatherDataExpectation.fulfill()
-        } onError: { (error) in
-            weatherDataExpectation.fulfill()
-            receivedError = true
-        }
+        })
+        
+        weatherDataService.requestWeatherData(for: receivedPlacemark)
         self.wait(for: [weatherDataExpectation], timeout: 2.0)
 
         XCTAssertTrue(unAvailableData)
-        XCTAssertFalse(receivedError)
 
     }
     

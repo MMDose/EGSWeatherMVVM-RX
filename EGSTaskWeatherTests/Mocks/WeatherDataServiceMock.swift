@@ -13,7 +13,7 @@ import CoreLocation
 /// Mock object of `WeatherDataService`, parse `StubWeatherModelJSON` json from TestBundle. 
 final class WeatherDataServiceMock: WeatherDataServiceProtocol {
     
-    var weatherData: BehaviorSubject<DataResult> = BehaviorSubject<DataResult>(value: .empty)
+    var weatherData: PublishSubject<DataResult> = PublishSubject<DataResult>()
     
     private let networkSessionMock = NetworkSessionMock()
     

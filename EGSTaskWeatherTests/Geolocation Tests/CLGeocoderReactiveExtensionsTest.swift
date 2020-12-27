@@ -17,6 +17,8 @@ import XCTest
 class CLGeocoderReactiveExtensionsTest: XCTestCase {
     
     func testReverseGeocoderLocation() {
+        // For geolocation protocol its required that device should be connected to network oterwise test will failure.
+
         let expectation = XCTestExpectation()
         let targetLocation = CLLocation(latitude: 40.177200, longitude: 44.503490)
         let targetLocality: String = "Yerevan"
@@ -29,13 +31,8 @@ class CLGeocoderReactiveExtensionsTest: XCTestCase {
                 expectation.fulfill()
             })
         }
-    
-        
-  
         self.wait(for: [expectation], timeout: 1.0)
-        
         XCTAssertEqual(targetLocality, receivedLocality)
-
     }
     
     func testReverseGeocoderLocationFailure() {

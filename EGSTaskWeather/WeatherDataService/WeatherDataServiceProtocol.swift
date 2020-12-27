@@ -18,7 +18,7 @@ protocol WeatherDataServiceProtocol {
     /// BehaviorSubject of DataResult.
     ///
     /// After fetch process subject start observing weather data.
-    var weatherData: BehaviorSubject<DataResult> { get }
+    var weatherData: PublishSubject<DataResult> { get }
     
     /// Requests weather data.
     /// - Parameter placemark: Weather data for placemark.

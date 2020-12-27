@@ -55,12 +55,14 @@ final class HomeViewModel: HomeViewModelProtocol {
     /// Calls `locationManager.stopUpdatingLocation()` when receives first no-nill placemark.
     private func handlePlacemarksUpdates() {
         // Starts observing location updates and converts to placemark.
-        locationService.placemarks.distinctUntilChanged().compactMap({$0}).drive {[weak self] (placemark) in
+        locationService.placemarks.distinctUntilChanged().drive {[weak self] (placemark) in
             guard let self = self else { return }
+            if placemark != nil {
                 // When receives first non-nill placemark, stops updatingLocation.
                 self.locationService.locationManager.stopUpdatingLocation()
-                // Requests to weather data.
-                self.weatherDataService.requestWeatherData(for: placemark)
+            }
+            // Requests to weather data.
+            self.weatherDataService.requestWeatherData(for: placemark)
         }.disposed(by: disposeBag)
         
     }

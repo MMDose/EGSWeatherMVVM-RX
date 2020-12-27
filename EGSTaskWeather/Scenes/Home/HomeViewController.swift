@@ -35,7 +35,6 @@ final class HomeViewController: UIViewController, StoryboardInitializable {
     override func viewDidLoad() {
         super.viewDidLoad()
         bindUIElements()
-        self.contentVisibility(isHidden: true)
         bindAlertViews()
     }
     
@@ -51,9 +50,8 @@ final class HomeViewController: UIViewController, StoryboardInitializable {
             guard let self = self else { return }
             // Updates UI.
             if case .some(let locality, let weather) = dataType {
-                self.emptyDataViewVisibility(isHidden: false)
-                self.locationTitleLabel.text = locality
                 self.contentVisibility(isHidden: false)
+                self.locationTitleLabel.text = locality
                 self.temperatureLabel.text = "\(Int(weather.current.temperature)) "
                 self.weatherDescriptionLabel.text = weather.current.weatherDescription[0].localizedDescription
                 self.sunsetLabel.text = "Sunset: \(weather.current.sunset.toHours())"
@@ -71,7 +69,7 @@ final class HomeViewController: UIViewController, StoryboardInitializable {
                     Nuke.loadImage(with: item.weatherDescription[0].iconURL, into: cell.weatherIconImageView)
                 }.disposed(by: self.disposeBag)
             } else {
-                self.emptyDataViewVisibility(isHidden: true)
+                self.contentVisibility(isHidden: true)
             }
         }).disposed(by: disposeBag)
     }
@@ -81,21 +79,15 @@ final class HomeViewController: UIViewController, StoryboardInitializable {
         viewModel.alertMessagesSubject.observeOn(MainScheduler()).bind(to: rx.alert).disposed(by: disposeBag)
     }
     
-    func emptyDataViewVisibility(isHidden: Bool) {
-        
+    /// Set content visibility.
+    private func contentVisibility(isHidden: Bool) {
+        UIView.animate(withDuration: 0.3,animations: {
+            self.contentView.alpha = isHidden ? 0 : 1
+            self.emptyStateView.alpha = isHidden ? 1 : 0
+        }) { (_) in
+            self.contentView.isHidden = isHidden
+            self.emptyStateView.isHidden = !isHidden
+        }
     }
     
-    /// Set content visibility.
-    /// - Parameter isHidden: Is content hidden.
-    private func contentVisibility(isHidden: Bool) {
-            UIView.animate(withDuration: 0.3,animations: {
-                self.contentView.alpha = isHidden ? 0 : 1
-                self.emptyStateView.alpha = isHidden ? 1 : 0
-            }) { (_) in
-                self.contentView.isHidden = isHidden
-                self.emptyStateView.isHidden = !isHidden
-            }
-        
-    }
-
 }

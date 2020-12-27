@@ -35,22 +35,25 @@ class HomeViewModelTest: XCTestCase {
     }
     
     func testCurrentCitySubject() {
+        // For geolocation protocol its required that device should be connected to network oterwise test will failure.
+
         weatherDataServiceMock.isReachibly = true 
         let expectation = XCTestExpectation()
         let targetLocation = CLLocation(latitude: 40.18111, longitude: 44.51361)
         let targetLocality: String = "Yerevan"
         var receivedLocality: String?
         expectation.expectedFulfillmentCount = 1
-        autoreleasepool {
-            _ = homeViewModel.currentCity.subscribe(onNext: { value in
-                receivedLocality = value
-                expectation.fulfill()
-            })
-            homeViewModel.fetchWeather()
-            geolocationService.locationManager.delegate!.locationManager!(locationManager, didUpdateLocations: [targetLocation])
+        _ = homeViewModel.weatherRelay.subscribe(onNext: { value in
+            if case .some(let locality,_) = value {
+                receivedLocality = locality
+            }
+            expectation.fulfill()
+            
+        })
+        homeViewModel.fetchWeather()
 
-        }
-        
+        geolocationService.locationManager.delegate!.locationManager!(locationManager, didUpdateLocations: [targetLocation])
+                
         self.wait(for: [expectation], timeout: 1)
         XCTAssertEqual(targetLocality, receivedLocality)
     }
@@ -62,14 +65,15 @@ class HomeViewModelTest: XCTestCase {
         var receivedWeather: WeatherModel.CurrentWeather?
         
         expectation.expectedFulfillmentCount = 1
-            homeViewModel.fetchWeather()
-            geolocationService.locationManager.delegate!.locationManager!(locationManager, didUpdateLocations: [targetLocation])
-
-            _ = homeViewModel.currentWeather.subscribe(onNext: { value in
-                receivedWeather = value
+        _ = homeViewModel.weatherRelay.subscribe(onNext: { value in
+                if case .some(_,let weather) = value {
+                    receivedWeather = weather.current
+                }
                 expectation.fulfill()
             })
-        
+        homeViewModel.fetchWeather()
+        geolocationService.locationManager.delegate!.locationManager!(locationManager, didUpdateLocations: [targetLocation])
+
         self.wait(for: [expectation], timeout: 1)
         XCTAssertEqual(receivedWeather?.cloudsPercentage, 0.0)
         XCTAssertEqual(receivedWeather?.weatherDescription[0].description, "clear sky")
@@ -86,20 +90,22 @@ class HomeViewModelTest: XCTestCase {
         var receivedWeather: [WeatherModel.Daily]?
         
         expectation.expectedFulfillmentCount = 1
-            homeViewModel.fetchWeather()
-            geolocationService.locationManager.delegate!.locationManager!(locationManager, didUpdateLocations: [targetLocation])
 
-            _ = homeViewModel.dailyWeather.subscribe(onNext: { value in
-                receivedWeather = value
+        _ = homeViewModel.weatherRelay.subscribe(onNext: { value in
+            if case .some(_,let weather) = value {
+                receivedWeather = weather.daily
+            }
                 expectation.fulfill()
             })
-        
+        homeViewModel.fetchWeather()
+        geolocationService.locationManager.delegate!.locationManager!(locationManager, didUpdateLocations: [targetLocation])
+
         self.wait(for: [expectation], timeout: 1)
         
         XCTAssertNotNil(receivedWeather)
-        XCTAssertEqual(receivedWeather![0].temperatureMax, 286.35)
-        XCTAssertEqual(receivedWeather![0].temperatureMin, 285.77)
-        XCTAssertEqual(receivedWeather![0].weekDay, "Sunday")
+        XCTAssertEqual(receivedWeather![0].temperatureMax, 286.37)
+        XCTAssertEqual(receivedWeather![0].temperatureMin, 284.65)
+        XCTAssertEqual(receivedWeather![0].weekDay, "Saturday")
 
     }
 }

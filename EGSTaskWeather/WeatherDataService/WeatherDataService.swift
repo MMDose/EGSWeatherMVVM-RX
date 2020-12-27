@@ -15,7 +15,7 @@ import CoreLocation
 
 final class WeatherDataService: WeatherDataServiceProtocol {
     
-    var weatherData: BehaviorSubject<DataResult> = BehaviorSubject<DataResult>(value: .empty)
+    var weatherData: PublishSubject<DataResult> = PublishSubject<DataResult>()
     
     private var disposeBag = DisposeBag()
     private var reachability: ReachabilityServiceProtocol
@@ -30,7 +30,6 @@ final class WeatherDataService: WeatherDataServiceProtocol {
         self.sorageService = storageSession
     }
     
-    
     func requestWeatherData(for placemark: CLPlacemark?) {
         // If connection is unreachable restore from storage.
         if  reachability.connection == .none {
@@ -38,9 +37,13 @@ final class WeatherDataService: WeatherDataServiceProtocol {
         }
         // Observe connection reachability
         reachability.connectionSubject.subscribe(onNext: {[weak self] (connection) in
-            if connection != .none, let location = placemark?.location, let locality = placemark?.locality   {
-                // if connection is available request data.
-                self?.fetchFromNetwork(location: location, locality: locality)
+            if connection != .none {
+                if let location = placemark?.location, let locality = placemark?.locality {
+                    // if connection is available request data.
+                    self?.fetchFromNetwork(location: location, locality: locality)
+                } else {
+                    self?.weatherData.onNext(.empty)
+                }
             }
         }).disposed(by: disposeBag)
     }

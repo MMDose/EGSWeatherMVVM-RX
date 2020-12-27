@@ -120,6 +120,8 @@ class GeoLocationServiceTests: XCTestCase {
     }
     
     func testGeolocationServiceGeocoder() {
+        // For geolocation protocol its required that device should be connected to network oterwise test will failure.
+
         let expectation = XCTestExpectation()
         let targetLocation = CLLocation(latitude: 40.177200, longitude: 44.503490)
         let targetLocality: String = "Yerevan"
@@ -128,7 +130,7 @@ class GeoLocationServiceTests: XCTestCase {
 
         autoreleasepool {
             let locationManager = CLLocationManager()
-            
+
             let geolocation: GeolocationProtocol = GeolocationService(locationManager: locationManager)
             _ = geolocation.placemarks.drive (onNext: { (value) in
                 receivedLocality = value?.locality
