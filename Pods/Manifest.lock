@@ -1,0 +1,50 @@
+PODS:
+  - Nuke (9.1.1)
+  - ReachabilitySwift (4.3.1)
+  - RxBlocking (5.1.1):
+    - RxSwift (~> 5)
+  - RxCocoa (5.1.1):
+    - RxRelay (~> 5)
+    - RxSwift (~> 5)
+  - RxReachability (1.0.0):
+    - ReachabilitySwift (~> 4.3.1)
+    - RxCocoa (~> 5)
+    - RxSwift (~> 5)
+  - RxRelay (5.1.1):
+    - RxSwift (~> 5)
+  - RxSwift (5.1.1)
+  - RxTest (5.1.1):
+    - RxSwift (~> 5)
+
+DEPENDENCIES:
+  - Nuke
+  - RxBlocking
+  - RxCocoa
+  - RxReachability
+  - RxSwift
+  - RxTest
+
+SPEC REPOS:
+  trunk:
+    - Nuke
+    - ReachabilitySwift
+    - RxBlocking
+    - RxCocoa
+    - RxReachability
+    - RxRelay
+    - RxSwift
+    - RxTest
+
+SPEC CHECKSUMS:
+  Nuke: af4301b154d3afd8a3b045a5194a9a773a00b7a8
+  ReachabilitySwift: 4032e2f59586e11e3b0ebe15b167abdd587a388b
+  RxBlocking: 5f700a78cad61ce253ebd37c9a39b5ccc76477b4
+  RxCocoa: 32065309a38d29b5b0db858819b5bf9ef038b601
+  RxReachability: 21d3e96f39bc166a21c357e923f47dec148ca97b
+  RxRelay: d77f7d771495f43c556cbc43eebd1bb54d01e8e9
+  RxSwift: 81470a2074fa8780320ea5fe4102807cb7118178
+  RxTest: 711632d5644dffbeb62c936a521b5b008a1e1faa
+
+PODFILE CHECKSUM: 1db402c514dcf815f7b9b1637e657fed73f9b4bf
+
+COCOAPODS: 1.9.2
