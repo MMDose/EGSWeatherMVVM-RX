@@ -7,6 +7,12 @@
 
 import UIKit
 
+/// Result type of Weather Data Fetch.
+enum DataResult {
+    case empty
+    case some(locality: String, weatherModel: WeatherModel)
+}
+
 struct WeatherModel: Decodable {
     
     enum CondingKeys: String, CodingKey {

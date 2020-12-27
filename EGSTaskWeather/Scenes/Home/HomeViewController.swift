@@ -26,6 +26,8 @@ final class HomeViewController: UIViewController, StoryboardInitializable {
     @IBOutlet weak var humidityLabel: UILabel!
     @IBOutlet weak var pressureLabel: UILabel!
     @IBOutlet weak var iconImageView: UIImageView!
+    @IBOutlet weak var contentView: UIView!
+    @IBOutlet weak var emptyStateView: UIView!
     
     private var disposeBag = DisposeBag()
     private var viewModel: HomeViewModelProtocol = HomeViewModel()
@@ -33,7 +35,6 @@ final class HomeViewController: UIViewController, StoryboardInitializable {
     override func viewDidLoad() {
         super.viewDidLoad()
         bindUIElements()
-        bindTableView()
         self.contentVisibility(isHidden: true)
         bindAlertViews()
     }
@@ -46,53 +47,55 @@ final class HomeViewController: UIViewController, StoryboardInitializable {
     
     /// Bind UI elements to view model subjects.
     func bindUIElements() {
-        viewModel.currentCity.bind(to: locationTitleLabel.rx.text).disposed(by: disposeBag)
-        viewModel.currentWeather.observeOn(MainScheduler()).subscribe (onNext: {[weak self] (weather) in
+        viewModel.weatherRelay.observeOn(MainScheduler()).subscribe (onNext: {[weak self] (dataType) in
             guard let self = self else { return }
             // Updates UI.
-            self.contentVisibility(isHidden: false)
-            self.temperatureLabel.text = "\(Int(weather.temperature)) "
-            self.weatherDescriptionLabel.text = weather.weatherDescription[0].localizedDescription
-            self.sunsetLabel.text = "Sunset: \(weather.sunset.toHours())"
-            self.sunriseLabel.text = "Sunrise: \(weather.sunrise.toHours())"
-            self.cloudsLabel.text = "Clouds: \(weather.cloudsPercentage) %"
-            self.windSpeedLabel.text = "Wind speed: \(weather.windSpeed)"
-            self.humidityLabel.text = "Humidity: \(weather.humidity) %"
-            self.pressureLabel.text = "Pressure: \(weather.pressure) hPa"
-            Nuke.loadImage(with: weather.weatherDescription[0].iconURL, into: self.iconImageView)
+            if case .some(let locality, let weather) = dataType {
+                self.emptyDataViewVisibility(isHidden: false)
+                self.locationTitleLabel.text = locality
+                self.contentVisibility(isHidden: false)
+                self.temperatureLabel.text = "\(Int(weather.current.temperature)) "
+                self.weatherDescriptionLabel.text = weather.current.weatherDescription[0].localizedDescription
+                self.sunsetLabel.text = "Sunset: \(weather.current.sunset.toHours())"
+                self.sunriseLabel.text = "Sunrise: \(weather.current.sunrise.toHours())"
+                self.cloudsLabel.text = "Clouds: \(weather.current.cloudsPercentage) %"
+                self.windSpeedLabel.text = "Wind speed: \(weather.current.windSpeed)"
+                self.humidityLabel.text = "Humidity: \(weather.current.humidity) %"
+                self.pressureLabel.text = "Pressure: \(weather.current.pressure) hPa"
+                Nuke.loadImage(with: weather.current.weatherDescription[0].iconURL, into: self.iconImageView)
+                
+                Observable.from(optional: weather.daily).bind(to: self.tableView.rx.items(cellIdentifier: WeatherCell.reuseIdentifier(), cellType: WeatherCell.self)) {row, item, cell in
+                    cell.weekDayLabel.text = item.weekDay
+                    cell.maxTemperatureLabel.text = "\(Int(item.temperatureMax))"
+                    cell.minTemperatureLabel.text = "\(Int(item.temperatureMin))"
+                    Nuke.loadImage(with: item.weatherDescription[0].iconURL, into: cell.weatherIconImageView)
+                }.disposed(by: self.disposeBag)
+            } else {
+                self.emptyDataViewVisibility(isHidden: true)
+            }
         }).disposed(by: disposeBag)
     }
     
-    /// Bind tableView to view model dailiy weather subject.
-    func bindTableView() {
-        viewModel.dailyWeather.bind(to: tableView.rx.items(cellIdentifier: WeatherCell.reuseIdentifier(), cellType: WeatherCell.self)) {row, item, cell in
-            cell.weekDayLabel.text = item.weekDay
-            cell.maxTemperatureLabel.text = "\(Int(item.temperatureMax))"
-            cell.minTemperatureLabel.text = "\(Int(item.temperatureMin))"
-            Nuke.loadImage(with: item.weatherDescription[0].iconURL, into: cell.weatherIconImageView)        
-        }.disposed(by: disposeBag)
+    /// Bind controller to view models alert views.
+    private func bindAlertViews() {
+        viewModel.alertMessagesSubject.observeOn(MainScheduler()).bind(to: rx.alert).disposed(by: disposeBag)
     }
     
-    /// Bind controller to view models alert views.
-    func bindAlertViews() {
-        viewModel.alertMessagesSubject.observeOn(MainScheduler()).bind(to: rx.alert).disposed(by: disposeBag)
+    func emptyDataViewVisibility(isHidden: Bool) {
+        
     }
     
     /// Set content visibility.
     /// - Parameter isHidden: Is content hidden.
     private func contentVisibility(isHidden: Bool) {
-        self.tableView.isHidden = isHidden
-        self.locationTitleLabel.isHidden = isHidden
-        self.temperatureLabel.isHidden = isHidden
-        self.weatherDescriptionLabel.isHidden = isHidden
-        self.sunsetLabel.isHidden = isHidden
-        self.sunriseLabel.isHidden = isHidden
-        self.cloudsLabel.isHidden = isHidden
-        self.windSpeedLabel.isHidden = isHidden
-        self.humidityLabel.isHidden = isHidden
-        self.pressureLabel.isHidden = isHidden
-        self.iconImageView.isHidden = isHidden
-
+            UIView.animate(withDuration: 0.3,animations: {
+                self.contentView.alpha = isHidden ? 0 : 1
+                self.emptyStateView.alpha = isHidden ? 1 : 0
+            }) { (_) in
+                self.contentView.isHidden = isHidden
+                self.emptyStateView.isHidden = !isHidden
+            }
+        
     }
 
 }

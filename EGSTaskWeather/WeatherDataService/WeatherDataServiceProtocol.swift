@@ -10,12 +10,6 @@ import RxSwift
 import RxCocoa
 import CoreLocation
 
-/// Result type of Weather Data Fetch.
-enum DataResult {
-    case empty
-    case some(locality: String, weatherModel: WeatherModel)
-}
-
 
 //MARK: - WeatherDataServiceProtocol
 

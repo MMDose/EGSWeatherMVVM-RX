@@ -15,14 +15,8 @@ import CoreLocation
 //MARK: - HomeViewModelProtocol
 
 protocol HomeViewModelProtocol {
-    /// Observs current city.
-    var currentCity: PublishRelay<String> { get }
-    
     /// Observs current weather.
-    var currentWeather: PublishRelay<WeatherModel.CurrentWeather> { get }
-    
-    /// Observs daly weather.
-    var dailyWeather: PublishRelay<[WeatherModel.Daily]> { get }
+    var weatherRelay: PublishRelay<DataResult> { get }
     
     /// Bindable subject which observs `SmallAlert`,  bindable with controller, see Reactive extension for more details..
     var alertMessagesSubject: PublishSubject<SmallAlert> { get }
@@ -41,16 +35,14 @@ final class HomeViewModel: HomeViewModelProtocol {
     private let disposeBag = DisposeBag()
     
     //MARK: - Protocol Variables
-    
-    var dailyWeather: PublishRelay<[WeatherModel.Daily]> = PublishRelay<[WeatherModel.Daily]>()
-    var currentCity: PublishRelay<String> = PublishRelay<String>()
-    var currentWeather: PublishRelay<WeatherModel.CurrentWeather> = PublishRelay<WeatherModel.CurrentWeather>()
+
+    var weatherRelay: PublishRelay<DataResult> = PublishRelay<DataResult>()
     var alertMessagesSubject: PublishSubject<SmallAlert> = PublishSubject<SmallAlert>()
     
     init(locationService: GeolocationProtocol = GeolocationService(), weatherDataService: WeatherDataServiceProtocol = WeatherDataService()) {
         self.locationService = locationService
         self.weatherDataService = weatherDataService
-        handleWeatherUpdates()
+        self.handleWeatherUpdates()
     }
     
     func fetchWeather() {
@@ -98,26 +90,8 @@ final class HomeViewModel: HomeViewModelProtocol {
     ///
     /// When receives `empty`  shows error alert.
     private func handleWeatherUpdates() {
-        // Alert model for error cases.
-        let emptyDateErrorAction = SmallAlert.unAvailableWeatherError { (_) in}
-        // Subscribes to receiving weather updates.
-        weatherDataService.weatherData.subscribe {[weak self] (result) in
-            guard let self = self else { return }
-            switch result {
-            case .some(locality: let locality, weatherModel: let weatherModel):
-                self.currentWeather.accept(weatherModel.current)
-                self.currentCity.accept(locality)
-                self.dailyWeather.accept(Array(weatherModel.daily.dropFirst()))
-                // Removes pressented error view.
-                emptyDateErrorAction.retrieve?()
-            case .empty:
-                // Shows error message.
-                self.alertMessagesSubject.onNext(emptyDateErrorAction)
-            }
-        } onError: { (error) in
-            // Shows error message.
-            emptyDateErrorAction.retrieve?()
-        }.disposed(by: disposeBag)
+        // Binds weather data with WeatherRelay.
+        weatherDataService.weatherData.bind(to: weatherRelay).disposed(by: disposeBag)
         
     }
 }
