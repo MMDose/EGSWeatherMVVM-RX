@@ -15,10 +15,6 @@ import CoreLocation
 
 extension Reactive where Base: CLLocationManager {
     
-    /// Proxy for CLLocationManagerDelegate.
-    public var delegate: DelegateProxy<CLLocationManager, CLLocationManagerDelegate> {
-        return RXCoreLocationDelegateProxy.proxy(for: base)
-    }
     ///Observable of didUpdateLocation.
     public var didUpdateLocations: Observable<[CLLocation]> {
         return RXCoreLocationDelegateProxy.proxy(for: base).didUpdateLocationSubject.asObservable()

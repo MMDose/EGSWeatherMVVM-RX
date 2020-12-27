@@ -25,7 +25,6 @@
 		88D2650325966EAB005F51F1 /* APIPressentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88D2650225966EAB005F51F1 /* APIPressentable.swift */; };
 		88D2650825967130005F51F1 /* GeolocationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88D2650725967130005F51F1 /* GeolocationService.swift */; };
 		88D26512259676BE005F51F1 /* RXCoreLocationDelegateProxy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88D26511259676BE005F51F1 /* RXCoreLocationDelegateProxy.swift */; };
-		88D2651B25968120005F51F1 /* EGSTaskWeatherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88D2651A25968120005F51F1 /* EGSTaskWeatherTests.swift */; };
 		88D2652625968140005F51F1 /* GeolocationTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88D2652525968140005F51F1 /* GeolocationTest.swift */; };
 		88D2659625968C4A005F51F1 /* GeoLocationMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88D2659525968C4A005F51F1 /* GeoLocationMock.swift */; };
 		88D2659925968F8D005F51F1 /* CLLocationReactiveExtensionsTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88D2659825968F8D005F51F1 /* CLLocationReactiveExtensionsTest.swift */; };
@@ -115,7 +114,6 @@
 		88D2650725967130005F51F1 /* GeolocationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeolocationService.swift; sourceTree = "<group>"; };
 		88D26511259676BE005F51F1 /* RXCoreLocationDelegateProxy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RXCoreLocationDelegateProxy.swift; sourceTree = "<group>"; };
 		88D2651825968120005F51F1 /* EGSTaskWeatherTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = EGSTaskWeatherTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		88D2651A25968120005F51F1 /* EGSTaskWeatherTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EGSTaskWeatherTests.swift; sourceTree = "<group>"; };
 		88D2651C25968120005F51F1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		88D2652525968140005F51F1 /* GeolocationTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeolocationTest.swift; sourceTree = "<group>"; };
 		88D2659525968C4A005F51F1 /* GeoLocationMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeoLocationMock.swift; sourceTree = "<group>"; };
@@ -350,7 +348,6 @@
 				88D266B12598AAFE005F51F1 /* HomeViewModel Test */,
 				88D265C72597B142005F51F1 /* Utility Tests */,
 				88D2652425968127005F51F1 /* Geolocation Tests */,
-				88D2651A25968120005F51F1 /* EGSTaskWeatherTests.swift */,
 				88D2651C25968120005F51F1 /* Info.plist */,
 			);
 			path = EGSTaskWeatherTests;
@@ -712,7 +709,6 @@
 				88D266A025989B30005F51F1 /* WeatherDataServiceTests.swift in Sources */,
 				88D26692259882CA005F51F1 /* StorageServiceTest.swift in Sources */,
 				88D2652625968140005F51F1 /* GeolocationTest.swift in Sources */,
-				88D2651B25968120005F51F1 /* EGSTaskWeatherTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
