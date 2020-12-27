@@ -10,7 +10,7 @@ import RxSwift
 import RxCocoa
 import CoreLocation
 
-/// Result type of Weather Data Fetch
+/// Result type of Weather Data Fetch.
 enum DataResult {
     case empty
     case some(locality: String, weatherModel: WeatherModel)
@@ -21,12 +21,14 @@ enum DataResult {
 
 protocol WeatherDataServiceProtocol {
     
-    /// BehaviorSubject of DataResult
+    /// BehaviorSubject of DataResult.
+    ///
+    /// After fetch process subject start observing weather data.
     var weatherData: BehaviorSubject<DataResult> { get }
     
     /// Requests weather data.
     /// - Parameter placemark: Weather data for placemark.
     ///
-    /// If connection in unreachable fetchs from storage.
+    /// If connection is unreachable' fetchs from storage.
     func requestWeatherData(for placemark: CLPlacemark?)
 }

@@ -11,7 +11,7 @@ import UIKit
 //MARK: - StoryboardInitializable
 
 protocol StoryboardInitializable {
-    /// View controllers storyboard ID.
+    /// View controller storyboard ID.
     static var viewControllerStoryboardID: String { get }
     
     /// Initializate controller from storyboard.
@@ -35,6 +35,7 @@ extension StoryboardInitializable where Self: UIViewController {
 // MARK: - ReuseIdentifiable
 
 protocol ReuseIdentifiable {
+    ///
     static func reuseIdentifier() -> String
 }
 

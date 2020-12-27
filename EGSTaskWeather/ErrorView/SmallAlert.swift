@@ -34,10 +34,10 @@ final class SmallAlert {
 
 extension SmallAlert {
     static func locationServicesUnavailableError(action: SmallAlertAction) -> SmallAlert {
-        return SmallAlert(title: "Warning", message: "Application needs your location to show weather for your.", actionTitle: "Settings", action: action)
+        return SmallAlert(title: "Warning", message: "Application needs your location to determine weather.", actionTitle: "Settings", action: action)
     }
     
     static func unAvailableWeatherError(action: SmallAlertAction) -> SmallAlert {
-        return SmallAlert(title: "ERROR", message: "Failed to load data from storage and network, check your connection", actionTitle: "", action: action)
+        return SmallAlert(title: "ERROR", message: "There is no data in storage and seems like your connection is unreachable.", actionTitle: "", action: action)
     }
 }

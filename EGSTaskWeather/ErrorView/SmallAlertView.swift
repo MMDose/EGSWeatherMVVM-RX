@@ -28,7 +28,7 @@ final class SmallAlertView: UIView {
     }
     
     required init?(coder: NSCoder) {
-        fatalError("Unsupproted constructor")
+        fatalError("init(coder:) is not supported")
     }
     
     override func removeFromSuperview() {
